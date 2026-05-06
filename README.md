@@ -124,7 +124,7 @@ Each cell maintains:
 
 ```bash
 # Clone repo
-git clone <your-repo-url>
+git clone "https://github.com/Shiv-2018/Excel_Engine"
 
 # Navigate
 cd spreadsheet-engine
