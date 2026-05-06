@@ -1,97 +1,132 @@
 # 📊 Spreadsheet Engine with Formula Evaluation
 
-A React-based mini spreadsheet application that replicates core Excel-like functionality, including formula parsing, dependency tracking, and real-time updates.
+A feature-rich **React-based spreadsheet engine** that replicates core Excel functionality, including formula parsing, dependency tracking, circular reference detection, and range-based computations.
 
 ---
 
 ## 🚀 Features
 
-### 🧩 Core Features
+### 🧩 Core Spreadsheet Functionality
 
-* ✅ 10×10 spreadsheet grid (A–J, 1–10)
+* ✅ 10×10 grid (A–J, 1–10)
 * ✅ Editable cells supporting:
 
-  * Numeric values
-  * Text values
+  * Numbers
+  * Text
   * Formulas (`=A1+B1`, `=A1*2`, etc.)
-* ✅ Formula parsing with:
-
-  * Arithmetic operators: `+ - * /`
-  * Multiple cell references
-  * Parentheses support
-* ✅ Automatic recalculation of dependent cells
-* ✅ Dependency graph for efficient updates
+* ✅ Real-time formula evaluation
 
 ---
 
-### 🔁 Dependency Management
+## 🧮 Formula Engine
 
-* Tracks relationships between cells
-* Propagates updates only to affected cells (optimized)
-* Handles chained dependencies:
+### Supported Operations
 
-  ```
-  A1 → B1 → C1
-  ```
+* Arithmetic: `+ - * /`
+* Parentheses: `(A1 + B1) / 2`
+* Multiple references in one formula
 
 ---
 
-### 🔄 Circular Reference Detection
+### 🔥 Range Functions (NEW)
 
-* Detects cycles using DFS traversal
-* Marks **all cells involved in the cycle**
-* Prevents infinite loops
+Supports Excel-like range operations:
 
-**Example:**
-
+```text
+=SUM(A1:A5)
+=AVG(A1:A5)
+=MIN(A1:A5)
+=MAX(A1:A5)
 ```
+
+### Example:
+
+```text
+A1 = 2
+A2 = 3
+A3 = 5
+
+B1 = =SUM(A1:A3)
+```
+
+👉 Output:
+
+```text
+B1 = 10
+```
+
+---
+
+## 🔁 Dependency Management
+
+* Tracks relationships between cells using a graph structure
+* Automatically updates dependent cells
+* Efficient recalculation (only affected cells updated)
+
+### Example:
+
+```text
+A1 → B1 → C1
+```
+
+Updating `A1` updates both `B1` and `C1`
+
+---
+
+## 🔄 Circular Reference Detection
+
+* Detects cycles using DFS (graph traversal)
+* Marks **all cells involved in the cycle**
+
+### Example:
+
+```text
 A1 = =B1
 B1 = =A1
 ```
 
 👉 Output:
 
-```
+```text
 A1 → #CIRCULAR
 B1 → #CIRCULAR
 ```
 
 ---
 
-### ⚠️ Error Handling
+## ⚠️ Error Handling
 
 * Invalid formulas → `#ERROR`
-* Circular references → `#CIRCULAR`
-* Empty references treated as `0`
+* Circular dependencies → `#CIRCULAR`
+* Empty cells treated as `0`
 * App remains stable (no crashes)
 
 ---
 
-## 💎 UI / UX Enhancements
+## 💎 UI / UX Features
 
 * ✨ Excel-like **Formula Bar**
-* 🎯 Active cell highlighting
-* ⌨️ Keyboard navigation (Arrow keys)
-* 📌 Sticky headers for rows & columns
-* 🎨 Clean UI using Tailwind CSS
-* 🔴 Error cells highlighted in red
-* 🖱️ Click-to-select cells
+* 🎯 Active cell highlighting (blue border)
+* 🟢 Referenced cell highlighting (green)
+* ⌨️ Keyboard navigation (arrow keys)
+* 📌 Sticky headers (rows & columns)
+* 🔴 Error cells highlighted
+* 🖱️ Click-to-select interaction
+* 🎨 Clean responsive UI (Tailwind CSS)
 
 ---
 
 ## 🔄 Undo / Redo System
 
-* Supports full state history
-* Instant undo/redo without lag
-* Fixed React state batching issue (single-click working)
+* Full state history tracking
+* Instant undo/redo (single-click)
+* Fixed React state batching issues
 
 ---
 
 ## 🧠 Architecture
 
-### State Structure
-
-Each cell maintains:
+### Cell Structure
 
 ```js
 {
@@ -102,12 +137,12 @@ Each cell maintains:
 }
 ```
 
-### Engine Components
+### Engine Modules
 
-* **Parser** → Extract cell references
-* **Evaluator** → Compute formula result
+* **Parser** → Extract references & ranges
+* **Evaluator** → Compute expressions & functions
 * **Dependency Graph** → Manage relationships
-* **Cycle Detector** → Prevent loops
+* **Cycle Detection** → Prevent infinite loops
 
 ---
 
@@ -116,23 +151,23 @@ Each cell maintains:
 * React (Vite)
 * Tailwind CSS
 * JavaScript (ES6)
-* No backend (client-side only)
+* Client-side only (no backend)
 
 ---
 
-## 📦 Installation & Setup
+## 📦 Setup Instructions
 
 ```bash
-# Clone repo
+# Clone repository
 git clone "https://github.com/Shiv-2018/Excel_Engine"
 
-# Navigate
+# Navigate into project
 cd spreadsheet-engine
 
 # Install dependencies
 npm install
 
-# Run app
+# Run locally
 npm run dev
 ```
 
@@ -140,7 +175,7 @@ npm run dev
 
 ## 🌐 Deployment
 
-You can deploy easily on:
+Deploy easily on:
 
 * Vercel
 * Netlify
@@ -149,30 +184,31 @@ You can deploy easily on:
 npm run build
 ```
 
-Upload the `dist/` folder.
+Upload the `dist/` folder or connect GitHub repo.
 
 ---
 
 ## 🎯 Bonus Features Implemented
 
-✔ Undo / Redo functionality
-✔ Keyboard navigation (Arrow keys)
 ✔ Formula bar (Excel-like UX)
+✔ Keyboard navigation
+✔ Undo / Redo functionality
 ✔ Sticky headers
-✔ Optimized recalculation (only affected cells)
-✔ Full circular dependency marking (not just one cell)
-✔ Error highlighting UI
-✔ Clean and responsive design
+✔ Optimized dependency updates
+✔ Full circular reference detection (multi-cell)
+✔ Referenced cell highlighting
+✔ Range-based functions (`SUM`, `AVG`, `MIN`, `MAX`)
+✔ Clean and responsive UI
 
 ---
 
 ## 🔥 Future Improvements
 
-* Range formulas (`=SUM(A1:A5)`)
-* Drag-to-fill functionality
-* Copy-paste support
-* Larger/dynamic grid
-* Backend persistence
+* Multiple range support (`SUM(A1:A5, B1:B5)`)
+* Conditional formulas (`IF`)
+* Copy-paste with relative references
+* Drag-to-fill cells
+* Persistent storage (localStorage / backend)
 
 ---
 
@@ -180,20 +216,21 @@ Upload the `dist/` folder.
 
 * Graph-based dependency resolution
 * DFS cycle detection in directed graphs
+* Formula parsing and evaluation
 * Efficient state management in React
-* Handling formula parsing and evaluation
-* Avoiding infinite loops in reactive systems
+* Building interactive spreadsheet-like systems
 
 ---
 
 ## 🏁 Conclusion
 
-This project demonstrates a strong understanding of:
+This project demonstrates:
 
-* Data structures (graphs)
-* React state management
-* System design for real-time updates
+* Strong problem-solving skills
+* Knowledge of data structures (graphs)
+* Real-world UI/UX implementation
+* Ability to build scalable frontend systems
 
 ---
 
-**Built with focus on correctness, performance, and usability.**
+**Built with focus on performance, correctness, and user experience.**

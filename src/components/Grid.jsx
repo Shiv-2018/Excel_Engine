@@ -5,8 +5,6 @@ import { evaluateFormula } from "../engine/evaluator";
 import { extractRefs } from "../engine/parser";
 import { detectCycle } from "../engine/dependencyGraph";
 
-
-
 const cols = "ABCDEFGHIJ".split("");
 const rows = Array.from({ length: 10 }, (_, i) => i + 1);
 
@@ -34,32 +32,42 @@ export default function Grid() {
   const [history, setHistory] = useState([]);
   const [future, setFuture] = useState([]);
 
+  const getSelectedRefs = () => {
+    const value = cells[selected].value;
+    if (!value.startsWith("=")) return new Set();
+
+    const refs = extractRefs(value);
+    return new Set(refs);
+  };
+
+  const selectedRefs = getSelectedRefs();
+
   const saveHistory = (state) => {
     setHistory((prev) => [...prev, structuredClone(state)]);
     setFuture([]);
   };
 
   const undo = () => {
-  if (!history.length) return;
+    if (!history.length) return;
 
-  const prevState = history[history.length - 1];
+    const prevState = history[history.length - 1];
 
-  setFuture(f => [structuredClone(cells), ...f]);
-  setCells(prevState);
+    setFuture((f) => [structuredClone(cells), ...f]);
+    setCells(prevState);
 
-  setHistory(h => h.slice(0, -1));
-};
+    setHistory((h) => h.slice(0, -1));
+  };
 
   const redo = () => {
-  if (!future.length) return;
+    if (!future.length) return;
 
-  const nextState = future[0];
+    const nextState = future[0];
 
-  setHistory(h => [...h, structuredClone(cells)]);
-  setCells(nextState);
+    setHistory((h) => [...h, structuredClone(cells)]);
+    setCells(nextState);
 
-  setFuture(f => f.slice(1));
-};
+    setFuture((f) => f.slice(1));
+  };
 
   const compute = (id, value, newCells) => {
     newCells[id].value = value;
@@ -99,15 +107,15 @@ export default function Grid() {
   };
 
   const handleChange = (id, value) => {
-  // ✅ Save current state BEFORE updating
-  saveHistory(cells);
+    // ✅ Save current state BEFORE updating
+    saveHistory(cells);
 
-  setCells(prev => {
-    const newCells = structuredClone(prev);
-    compute(id, value, newCells);
-    return newCells;
-  });
-};
+    setCells((prev) => {
+      const newCells = structuredClone(prev);
+      compute(id, value, newCells);
+      return newCells;
+    });
+  };
 
   // Keyboard navigation
   const handleKey = (e) => {
@@ -161,6 +169,7 @@ export default function Grid() {
                       value={cell.computed}
                       raw={cell.value}
                       selected={selected === id}
+                      isReferenced={selectedRefs.has(id)} // ✅ NEW
                       onSelect={() => setSelected(id)}
                       onChange={(v) => handleChange(id, v)}
                     />
